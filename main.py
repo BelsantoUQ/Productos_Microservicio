@@ -27,6 +27,7 @@ def get_produto_by_id(id_produto: int):
 @app.post('/producto', tags=['crear producto'])
 def create_producto(id_produto: int = Body(), referencia: str = Body(), nombre: str = Body(), precio: int = Body(), descripcion: str = Body(), marca: str = Body(), categoria: str = Body(), imagen_url: str = Body(), stock: int = Body()):
     mi_empresa.productos.append(Producto(id_produto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, 'A'))
+    mi_empresa.actualizar_tabla_productos()
     return mi_empresa.productos
 
 @app.put('/producto/{id}', tags=['editar producto'])
@@ -34,6 +35,7 @@ def update_producto(id_produto: int = Body(), referencia: str = Body(), nombre: 
     for i, p in enumerate(mi_empresa.productos):
         if p.id_produto == id:
             mi_empresa.productos[i] = Producto(id_produto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, 'A')
+            mi_empresa.actualizar_tabla_productos()
             return {"message": f"Producto con ID {id} actualizado exitosamente."}
     return {"error": "Producto no encontrado."}
 
@@ -42,6 +44,7 @@ def update_producto_estado(id: int):
     for i, p in enumerate(mi_empresa.productos):
         if p.id_producto == id:
             mi_empresa.productos[i].estado = 'I'
+            mi_empresa.actualizar_tabla_productos()
             return {"message": f"Estado del producto con ID {id} actualizado a Inactivo."}
     return {"error": "Producto no encontrado."}
 

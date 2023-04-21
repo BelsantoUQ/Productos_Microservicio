@@ -1,11 +1,21 @@
 from producto import Producto
+import mysql.connector
 
 class Empresa:
     def __init__(self):
-        # Creamos objetos de tipo Producto con referencia
-        self.productos = [Producto(1, "PROD001", "Camiseta", 20.99, "Camiseta de algodón con diseño estampado", "Adidas", "Ropa", "https://imagenurl.com/camiseta-adidas.jpg", 10, 'A'),
-                          Producto(2, "PROD002", "Zapatillas", 59.99, "Zapatillas deportivas con suela de goma", "Nike", "Calzado", "https://imagenurl.com/zapatillas-nike.jpg", 5, 'A'),
-                          Producto(3, "PROD003", "Pantalones", 35.99, "Pantalones vaqueros de corte recto", "Levi's", "Ropa", "https://imagenurl.com/pantalones-levis.jpg", 20, 'I')]
+    # Creamos una lista vacía para almacenar los productos
+        self.productos = []
+
+    # Configuramos la conexión a la base de datos
+        self.cnx = mysql.connector.connect(
+            user='root',
+            password='',
+            host='localhost',
+            database='productos_microservicio'
+        )
+
+    # Cargamos los productos desde la base de datos
+        self.cargar_productos_desde_bd()
 
     def buscar_producto_por_id(self, id_producto):
         left, right = 0, len(self.productos) - 1
@@ -18,3 +28,31 @@ class Empresa:
             else:
                 right = middle - 1
         return None
+
+    def actualizar_tabla_productos(self):
+        cursor = self.cnx.cursor()
+        # Actualizamos los productos existentes
+        for producto in self.productos:
+            query = f"UPDATE productos SET nombre='{producto.nombre}', precio={producto.precio}, descripcion='{producto.descripcion}', marca='{producto.marca}', categoria='{producto.categoria}', imagen_url='{producto.imagen_url}', stock={producto.stock}, estado='{producto.estado}' WHERE id_producto={producto.id_producto}"
+            cursor.execute(query)
+
+        # Añadimos los nuevos productos
+        for producto in self.productos:
+            query = f"SELECT COUNT(*) FROM productos WHERE id_producto={producto.id_producto}"
+            cursor.execute(query)
+            resultado = cursor.fetchone()[0]
+            if resultado == 0:
+                query = f"INSERT INTO productos (id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado) VALUES ({producto.id_producto}, '{producto.referencia}', '{producto.nombre}', {producto.precio}, '{producto.descripcion}', '{producto.marca}', '{producto.categoria}', '{producto.imagen_url}', {producto.stock}, '{producto.estado}')"
+                cursor.execute(query)
+
+        self.cnx.commit()
+
+    def cargar_productos_desde_bd(self):
+        cursor = self.cnx.cursor()
+        query = "SELECT id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado FROM productos"
+        cursor.execute(query)
+        productos_bd = cursor.fetchall()
+        for producto_bd in productos_bd:
+            id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado = producto_bd
+            producto = Producto(id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado)
+            self.productos.append(producto)
