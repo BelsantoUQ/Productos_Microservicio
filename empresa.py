@@ -1,20 +1,21 @@
-from producto import Producto
 import mysql.connector
+from producto import Producto
 
 class Empresa:
     def __init__(self):
-    # Creamos una lista vacía para almacenar los productos
+        # Creamos una lista vacía para almacenar los productos
         self.productos = []
 
-    # Configuramos la conexión a la base de datos
+        # Configuramos la conexión a la base de datos
         self.cnx = mysql.connector.connect(
+            host='172.28.0.2',  # Cambiar por la dirección IP o nombre del contenedor de MySQL
+            port=3306,  # Cambiar si el puerto del contenedor de MySQL es diferente
             user='root',
             password='12345',
-            host='172.19.0.2',
-            database='productos_microservicio'
+            database='productos_microservicio',
+            connect_timeout=60
         )
-
-    # Cargamos los productos desde la base de datos
+        # Cargamos los productos desde la base de datos
         self.cargar_productos_desde_bd()
 
     def buscar_producto_por_id(self, id_producto):
