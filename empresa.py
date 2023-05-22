@@ -9,8 +9,8 @@ class Empresa:
     # Configuramos la conexión a la base de datos
         self.cnx = mysql.connector.connect(
             user='root',
-            password='',
-            host='localhost',
+            password='12345',
+            host='172.19.0.2',
             database='productos_microservicio'
         )
 

@@ -57,7 +57,7 @@ def get_productos_activos():
     return productos_activos
 
 @app.get('/productos/all', tags=['todos los productos'])
-def get_productos(usuario: str = Depends(verificar_token)):
+def get_productos():
     if len(mi_empresa.productos) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron productos.")
     return mi_empresa.productos
@@ -72,12 +72,13 @@ def get_producto(id_producto: int):
 @app.post('/producto', tags=['crear producto'])
 def create_producto(referencia: str = Body(), nombre: str = Body(), precio: int = Body(), descripcion: str = Body(), marca: str = Body(), categoria: str = Body(), imagen_url: str = Body(), stock: int = Body(), usuario: str = Depends(verificar_token)):
     try:
-        nuevo_producto = Producto(referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, 'A')
+        nuevo_producto = Producto('0',referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, 'A')
         mi_empresa.productos.append(nuevo_producto)
         mi_empresa.actualizar_tabla_productos()
         return {"message": "Producto creado exitosamente", "producto": nuevo_producto}, 201
-    except:
-        raise HTTPException(status_code=400, detail="No se pudo crear el producto.")
+    except Exception as e:
+        error_message = str(e)
+        raise HTTPException(status_code=400, detail="No se pudo crear el producto."+ error_message)
 
 @app.put('/producto', tags=['editar producto'])
 def update_producto(id_producto: int = Body(), referencia: str = Body(), nombre: str = Body(), precio: int = Body(), descripcion: str = Body(), marca: str = Body(), categoria: str = Body(), imagen_url: str = Body(), stock: int = Body(), usuario: str = Depends(verificar_token)):
@@ -88,3 +89,14 @@ def update_producto(id_producto: int = Body(), referencia: str = Body(), nombre:
             return {"message": f"Producto con ID {id_producto} actualizado exitosamente."}
     return {"error": "Producto no encontrado."}, 404
 
+@app.delete('/producto/{id}', tags=['eliminar producto'])
+def delete_producto(id: int, usuario: str = Depends(verificar_token)):
+    for i, p in enumerate(mi_empresa.productos):
+        if p.id_producto == id:
+            if p.estado == 'A':
+                p.estado = 'I'
+                mi_empresa.actualizar_tabla_productos()
+                return {"message": f"Producto con ID {id} eliminado exitosamente."}
+            else:
+                raise HTTPException(status_code=400, detail="El producto ya está inactivo.")
+    raise HTTPException(status_code=404, detail="Producto no encontrado.")
