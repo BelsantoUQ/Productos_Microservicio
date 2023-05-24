@@ -8,10 +8,10 @@ class Empresa:
 
         # Configuramos la conexión a la base de datos
         self.cnx = mysql.connector.connect(
-            host='172.28.0.2',  # Cambiar por la dirección IP o nombre del contenedor de MySQL
+            host='localhost',  # Cambiar por la dirección IP o nombre del contenedor de MySQL
             port=3306,  # Cambiar si el puerto del contenedor de MySQL es diferente
             user='root',
-            password='12345',
+            password='',
             database='productos_microservicio',
             connect_timeout=60
         )
