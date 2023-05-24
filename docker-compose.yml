@@ -1,11 +1,12 @@
-version: '3'
+version: '3.1'
+
 services:
   mysql:
     image: mysql:latest
     container_name: productos_microservicio-mysql-1
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./BD/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
@@ -17,10 +18,6 @@ services:
     build: .
     ports:
       - 8000:8000
-    depends_on:
-      - mysql
-    networks:
-      - productos_network
 
 volumes:
   mysql_data:

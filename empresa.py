@@ -8,10 +8,10 @@ class Empresa:
 
         # Configuramos la conexión a la base de datos
         self.cnx = mysql.connector.connect(
-            host='localhost',  # Cambiar por la dirección IP o nombre del contenedor de MySQL
-            port=3306,  # Cambiar si el puerto del contenedor de MySQL es diferente
+            host='localhost',  # Utilizamos el nombre del servicio definido en el archivo docker-compose.yml
+            port=3306,
             user='root',
-            password='',
+            password='root',
             database='productos_microservicio',
             connect_timeout=60
         )
@@ -34,7 +34,7 @@ class Empresa:
         cursor = self.cnx.cursor()
         # Actualizamos los productos existentes
         for producto in self.productos:
-            query = f"UPDATE productos SET nombre='{producto.nombre}', precio={producto.precio}, descripcion='{producto.descripcion}', marca='{producto.marca}', categoria='{producto.categoria}', imagen_url='{producto.imagen_url}', stock={producto.stock}, estado='{producto.estado}' WHERE id_producto={producto.id_producto}"
+            query = f"UPDATE productos SET nombre='{producto.nombre}', precio={producto.precio}, descripcion='{producto.descripcion}', marca='{producto.marca}', categoria='{producto.categoria}', imagen_url='{producto.imagen_url}', stock={producto.stock}, estado_producto='{producto.estado_producto}' WHERE id_producto={producto.id_producto}"
             cursor.execute(query)
 
         # Añadimos los nuevos productos
@@ -43,17 +43,17 @@ class Empresa:
             cursor.execute(query)
             resultado = cursor.fetchone()[0]
             if resultado == 0:
-                query = f"INSERT INTO productos (id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado) VALUES ({producto.id_producto}, '{producto.referencia}', '{producto.nombre}', {producto.precio}, '{producto.descripcion}', '{producto.marca}', '{producto.categoria}', '{producto.imagen_url}', {producto.stock}, '{producto.estado}')"
+                query = f"INSERT INTO productos (id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado_producto) VALUES ({producto.id_producto}, '{producto.referencia}', '{producto.nombre}', {producto.precio}, '{producto.descripcion}', '{producto.marca}', '{producto.categoria}', '{producto.imagen_url}', {producto.stock}, '{producto.estado_producto}')"
                 cursor.execute(query)
 
         self.cnx.commit()
 
     def cargar_productos_desde_bd(self):
         cursor = self.cnx.cursor()
-        query = "SELECT id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado FROM productos"
+        query = "SELECT id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado_producto FROM productos"
         cursor.execute(query)
         productos_bd = cursor.fetchall()
         for producto_bd in productos_bd:
-            id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado = producto_bd
-            producto = Producto(id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado)
+            id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado_producto = producto_bd
+            producto = Producto(id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado_producto)
             self.productos.append(producto)

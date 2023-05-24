@@ -51,7 +51,7 @@ def login(usuario: str, contrasena: str):
 
 @app.get('/productos', tags=['productos'])
 def get_productos_activos():
-    productos_activos = [p for p in mi_empresa.productos if p.estado == 'A']
+    productos_activos = [p for p in mi_empresa.productos if p.estado_producto == 'A']
     if len(productos_activos) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron productos activos.")
     return productos_activos
@@ -93,8 +93,8 @@ def update_producto(id_producto: int = Body(), referencia: str = Body(), nombre:
 def delete_producto(id: int, usuario: str = Depends(verificar_token)):
     for i, p in enumerate(mi_empresa.productos):
         if p.id_producto == id:
-            if p.estado == 'A':
-                p.estado = 'I'
+            if p.estado_producto == 'A':
+                p.estado_producto = 'I'
                 mi_empresa.actualizar_tabla_productos()
                 return {"message": f"Producto con ID {id} eliminado exitosamente."}
             else:
