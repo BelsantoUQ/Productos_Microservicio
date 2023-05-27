@@ -1,5 +1,5 @@
 class Producto:
-    def __init__(self, id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado):
+    def __init__(self, id_producto, referencia, nombre, precio, descripcion, marca, categoria, imagen_url, stock, estado_producto):
 
         self.id_producto = id_producto
         self.referencia = referencia
@@ -10,7 +10,7 @@ class Producto:
         self.categoria = categoria
         self.imagen_url = imagen_url
         self.stock = stock
-        self.estado = estado
+        self.estado_producto = estado_producto
 
     def mostrar_info(self):
         print("Referencia:", self.referencia)
@@ -21,4 +21,4 @@ class Producto:
         print("Descripción:", self.descripcion)
         print("Imagen URL:", self.imagen_url)
         print("Stock:", self.stock)
-        print("Estado:", self.estado)
+        print("Estado:", self.estado_producto)

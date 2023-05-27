@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  pythonapp:
+    build:
+      context: ./app/
+    depends_on:
+      - mysql
+    ports:
+      - '80:80'
+    command: sh -c "sleep 10 && uvicorn main:app --host 0.0.0.0 --port 80"
+
+  mysql:
+    build:
+      context: ./mysql/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'productos_microservicio'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'

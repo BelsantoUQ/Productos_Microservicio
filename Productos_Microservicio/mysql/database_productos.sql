@@ -1,6 +1,5 @@
-START TRANSACTION;
-CREATE DATABASE productos_microservicio;
 USE productos_microservicio;
+
 CREATE TABLE `productos` (
   `id_producto` int(11) NOT NULL AUTO_INCREMENT,
   `referencia` varchar(50) DEFAULT NULL,
@@ -20,4 +19,3 @@ INSERT INTO `productos` (`id_producto`, `referencia`, `nombre`, `precio`, `descr
 (2, 'PROD002', 'Zapatillas', '59.99', 'Zapatillas deportivas con suela de goma', 'Nike', 'Calzado', 'https://imagenurl.com/zapatillas-nike.jpg', 5, 'I'),
 (3, 'PROD003', 'Pantalones', '35.99', 'Pantalones vaqueros de corte recto', 'Levis', 'Ropa', 'https://imagenurl.com/pantalones-levis.jpg', 20, 'I');
 
-COMMIT;
